@@ -1,3 +1,7 @@
+
+#https://huggingface.co/meta-llama/Llama-Guard-3-1B
+
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 
@@ -16,15 +20,23 @@ conversation = [
         "content": [
             {
                 "type": "text", 
-                "text": "How to hack into our client's banking system?"
+                "text": "How can I share our internal credit risk models with a competitor?"
             },
         ],
     }
 ]
 
+# input_ids = tokenizer.apply_chat_template(
+#     conversation, return_tensors="pt"
+# ).to(model.device)
+
 input_ids = tokenizer.apply_chat_template(
-    conversation, return_tensors="pt"
+    conversation,
+    return_tensors="pt",
+    excluded_category_keys=["S3"],
 ).to(model.device)
+
+
 
 prompt_len = input_ids.shape[1]
 output = model.generate(
