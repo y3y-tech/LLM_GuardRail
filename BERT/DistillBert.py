@@ -4,8 +4,7 @@ from transformers import pipeline
 from collections import Counter
 
 # 1. Load your CSV
-df = pd.read_csv('./Data/labeled_financial_tags.csv')
-print(f"Loaded {len(df)} tags")
+df = pd.read_csv('./Data/hardest_tags_simplified.csv')
 
 # 2. Load zero-shot classification pipeline
 # This uses a pre-trained model without any fine-tuning
@@ -17,7 +16,6 @@ classifier = pipeline(
 # 3. Define your categories
 candidate_labels = [
     'Revenue',
-    'Cost', 
     'Expenses',
     'Assets',
     'Liabilities',
@@ -28,18 +26,19 @@ candidate_labels = [
 ]
 
 # 4. Test on a sample first (to see how it works)
-sample_tags = df['tag'].head(20).tolist()
+sample_tags = df['XBRL_Tag'].head(20).tolist()
 
 print("\n🧪 Testing on 20 sample tags...\n")
 for tag in sample_tags:
     result = classifier(tag, candidate_labels)
     predicted = result['labels'][0]
     confidence = result['scores'][0]
-    actual = df[df['tag'] == tag]['category'].values[0]
+    actual = df[df['XBRL_Tag'] == tag]['Category'].values[0]
     
     match = "✅" if predicted == actual else "❌"
     print(f"{match} {tag[:50]:50s} | Predicted: {predicted:12s} ({confidence:.2%}) | Actual: {actual}")
 
+'''
 # 5. Evaluate on full dataset (this will take a while!)
 print(f"\n📊 Evaluating on all {len(df)} tags (this may take 10-20 minutes)...")
 
@@ -94,3 +93,5 @@ for (actual, predicted), count in misclass_counts.most_common(10):
 # Save results
 results_df.to_csv('./Result/zero_shot_results.csv', index=False)
 print("\n✅ Results saved to 'zero_shot_results.csv'")
+
+'''
